@@ -1,50 +1,51 @@
 import time
 import threading
-
 import curses
-from curses import wrapper
-from pynput import keyboard
 
-pressed = set()
-do_stop = False
+from keyboard.keylistener import KeyListener
+from world.entities.player import Player
 
-#setup key listener
-def on_press(key):
-    pressed.add(key)
-    
-def on_release(key):
-    pressed.discard(key)
+#The target of how long each frame should last, that is 1 / fps
+FRAME_TIME = 0.10
 
-    if key == keyboard.Key.esc:
-        global do_stop
-        do_stop = True
-        return False
+lock = threading.Lock()
 
 #main loop
 def main(stdscr):
+    global lock
+    
     stdscr.clear()
     curses.curs_set(0)
+    curses.noecho()
 
     height, width = stdscr.getmaxyx()
-    global do_stop
 
     player = Player(width // 2, height // 2)
 
+    keys = set()
+
+    keylistener = KeyListener(stdscr, keys, lock)
+    keylistener.daemon = True
+    keylistener.start()
+
     while True:
-        if do_stop:
-            break
+        if "\x1b" in keys:
+            return
         
         tick = time.time()
 
         #move player
-        if keyboard.Key.left in pressed:
+        if "KEY_LEFT" in keys:
             player.x -= 1
-        if keyboard.Key.right in pressed:
+        if "KEY_RIGHT" in keys:
             player.x += 1
-        if keyboard.Key.up in pressed:
+        if "KEY_UP" in keys:
             player.y -= 1
-        if keyboard.Key.down in pressed:
+        if "KEY_DOWN" in keys:
             player.y += 1
+
+        with lock:
+            keys.clear()
 
         #draw
         stdscr.clear()
@@ -53,28 +54,8 @@ def main(stdscr):
         
         #sleep
         tock = time.time()
-        time.sleep(max(0.20 - (tock - tick), 0))
-
-class GameThread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-
-    def run(self):
-        wrapper(main)
+        time.sleep(max(FRAME_TIME - (tock - tick), 0))
 
 
+curses.wrapper(main)
 
-class Player:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-thread = GameThread()
-thread.start()
-
-with keyboard.Listener(
-        on_press=on_press,
-        on_release=on_release) as listener:
-    listener.join()
-    
-thread.join()
