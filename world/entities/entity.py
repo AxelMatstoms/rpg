@@ -1,10 +1,15 @@
 class Entity:
     def __init__(self, world):
         self.components = {}
+        self.world = world
 
     def update(self):
-        for name, component in components.items():
+        for component in self.components.values():
             component.update()
+
+    def draw(self):
+        for component in self.components.values():
+            component.draw()
 
     def add_component(self, name, component):
         self.components[name] = component

@@ -1,8 +1,8 @@
-from component import Component
+from world.entities.components.component import Component
 
 class Position(Component):
     def __init__(self, entity, x, y):
-        super().__init__(self, entity)
+        super().__init__(entity)
         self.x = x
         self.y = y
 

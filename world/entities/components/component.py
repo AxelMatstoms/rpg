@@ -2,9 +2,9 @@ class Component:
     def __init__(self, entity):
         self.entity = entity
         
-    def update():
+    def update(self):
         pass
 
-    def draw():
+    def draw(self):
         pass
     

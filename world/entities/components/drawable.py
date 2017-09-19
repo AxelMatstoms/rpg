@@ -1,11 +1,11 @@
-from component import Component
+from world.entities.components.component import Component
 
 class Drawable(Component):
     def __init__(self, entity, stdscr):
-        super().__init__(self, entity)
+        super().__init__(entity)
         self.stdscr = stdscr
 
-    def draw():
+    def draw(self):
         if "position" in self.entity and "appearance" in self.entity:
             x, y = self.entity["position"].pos()
             char = self.entity["appearance"].char
