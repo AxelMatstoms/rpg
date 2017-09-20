@@ -4,16 +4,20 @@ class World:
         self.entities = []
         self.keys = keys
         self.lock = lock
+        self.updateno = 0
 
     def update(self):
+        self.updateno += 1
         for entity in self.entities:
             entity.update()
 
     def draw(self):
         self.stdscr.clear()
-        
+
         for entity in self.entities:
             entity.draw()
+
+        self.stdscr.refresh()
 
     def width(self):
         _, width = self.stdscr.getmaxyx()

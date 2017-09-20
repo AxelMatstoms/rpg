@@ -9,7 +9,7 @@ class Drawable(Component):
         if "position" in self.entity and "appearance" in self.entity:
             x, y = self.entity["position"].pos()
             char = self.entity["appearance"].char
-            attr = self.entity["appearance"].color_pair
+            attr = self.entity["appearance"].attr
 
             if attr:
                 self.stdscr.addstr(y, x, char, attr)

@@ -25,5 +25,3 @@ class KeyboardController(Component):
                 position.y += 1
                 with self.lock:
                     self.keys.remove("KEY_DOWN")
-
-                    
